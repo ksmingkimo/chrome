@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150">
+  <rect width="200" height="150" rx="12" fill="#ffe3c2"/>
+  <circle cx="72" cy="62" r="30" fill="#f2b155"/>
+  <circle cx="128" cy="62" r="30" fill="#f2b155"/>
+  <rect x="55" y="95" width="90" height="10" rx="5" fill="#8a6d4b"/>
+  <text x="70" y="138" font-size="20" fill="#7a5b3a">cat.svg</text>
+</svg>

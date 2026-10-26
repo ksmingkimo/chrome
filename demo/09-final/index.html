@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>第 9 课实战 · 限时抢购（Bug 大乱斗）</title>
+<style>
+  body { font-family: "Microsoft JhengHei", "PingFang TC", sans-serif; background: #eef2f7; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; color: #333; }
+  .panel { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 16px 20px; margin-top: 16px; max-width: 620px; }
+  .panel h2 { margin: 0 0 8px; font-size: 16px; color: #333; }
+  .panel p, .panel ol { margin: 0; padding-left: 20px; font-size: 14px; color: #666; line-height: 1.9; }
+  .panel p { padding-left: 0; }
+
+  /* ===== 商品卡片（bug① 藏在这里：标题白色、缺 padding、无圆角、hover 拼错） ===== */
+  .product-card {
+    background: #fff;
+    padding: 16px;
+    width: 320px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    margin-top: 16px;
+  }
+  .title {
+    color: #141414;
+    font-size: 18px;
+  }
+  .product-card p { color: #666; font-size: 14px; }
+  #price { color: #e05b5b; font-weight: bold; font-size: 18px; }
+  button { background: #2f6fed; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; margin: 8px 8px 8px 0; font-size: 14px; }
+  .btn-buy:hover { background: #1a4fc0; }
+  #greeting { color: #1a4fc0; font-weight: bold; }
+</style>
+</head>
+<body>
+  <h1>第 9 课实战 · 限时抢购</h1>
+
+  <div class="product-card">
+    <h2 class="title">超值机械键盘（你能看见我吗？）</h2>
+    <p>原价 ¥199</p>
+    <p id="price">抢购价：计算中…</p>
+    <p>库存：<img src="product2.png" alt="库存图"></p>
+    <button id="btn-buy" class="btn-buy">立即抢购</button>
+    <button id="btn-fav">收藏</button>
+    <button id="btn-chat">咨询客服</button>
+    <p id="greeting"></p>
+  </div>
+
+  <div class="panel">
+    <h2>上线前最后一刻，测试反馈了 6 个问题</h2>
+    <ol>
+      <li>商品标题几乎看不见，卡片排版别扭，按钮 hover 没效果</li>
+      <li>三个按钮里，有一个点了没反应</li>
+      <li>页面载入后，Console 里出现一条红色报错</li>
+      <li>库存图片裂了（Network 里有红行）</li>
+      <li>抢购价算得不对（活动规则：五折，再减 10 元）</li>
+      <li>点「立即抢购」时页面会卡一下</li>
+    </ol>
+    <p>任务：用你 8 课学的工具，全部定位并修复。标准流程：F12 定位 → 写回源码 → 刷新验证。卡住可以随时要提示。</p>
+  </div>
+
+<script>
+  // bug⑤：活动规则是「五折再减 10 元」，这里减了 30
+  let user = { name: '小明' };
+  
+  function applyDiscount(originalPrice) {
+    return originalPrice * 0.5 - 10;
+  }
+  document.getElementById('price').textContent = '抢购价：¥' + applyDiscount(199);
+
+  // 「收藏」正常；「咨询客服」漏绑了监听器（bug②）
+  document.getElementById('btn-fav').addEventListener('click', () => {
+    document.getElementById('greeting').textContent = '已收藏';
+  });
+
+  document.getElementById('btn-chat').addEventListener('click', () => {
+    document.getElementById('greeting').textContent = '已咨询客服';
+  });
+
+  // bug③：页面载入 500ms 后，引用了一个不存在的变量
+  setTimeout(() => {
+    document.getElementById('greeting').textContent = '欢迎，' + user.name;
+  }, 500);
+
+  // bug⑥：点击「立即抢购」时的布局抖动，让页面卡一下
+  document.getElementById('btn-buy').addEventListener('click', () => {
+    // for (let i = 0; i < 500; i++) {
+    //   document.body.style.marginTop = '0px';
+    //   document.body.offsetHeight;
+    // }
+    document.getElementById('greeting').textContent = '抢购成功！';
+  });
+</script>
+</body>
+</html>

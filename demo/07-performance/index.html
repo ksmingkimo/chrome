@@ -1,0 +1,82 @@
+<!--
+ * @Author: ksmingkimo ksmingkimo@users.noreply.github.com
+ * @Date: 2026-10-23 17:39:42
+ * @LastEditors: ksmingkimo ksmingkimo@users.noreply.github.com
+ * @LastEditTime: 2026-10-26 13:48:57
+ * @FilePath: \chrome\demo\07-performance\index.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>第 7 课练习 · 卡成幻灯片</title>
+<style>
+  body { font-family: "Microsoft JhengHei", "PingFang TC", sans-serif; background: #eef2f7; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; color: #333; }
+  .panel { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 16px 20px; margin-top: 16px; max-width: 620px; }
+  .panel h2 { margin: 0 0 8px; font-size: 16px; color: #333; }
+  .panel p, .panel ol { margin: 0; padding-left: 20px; font-size: 14px; color: #666; line-height: 1.9; }
+  .panel p { padding-left: 0; }
+  #stage { position: relative; height: 120px; background: #f4f7fb; border-radius: 8px; overflow: hidden; }
+  #box { position: absolute; top: 40px; left: 0; width: 40px; height: 40px; background: #e05b5b; border-radius: 8px; }
+  button { background: #2f6fed; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; margin: 8px 8px 8px 0; font-size: 14px; }
+  button:hover { background: #1a4fc0; }
+</style>
+</head>
+<body>
+  <h1>第 7 课练习 · 卡成幻灯片</h1>
+
+  <div class="panel">
+    <h2>动画区</h2>
+    <div id="stage"><div id="box"></div></div>
+    <button id="btn-start">开始动画</button>
+    <button id="btn-jank">开始卡顿（元凶开关）</button>
+    <p id="note">小方块本应平滑往返移动；打开「卡顿」后它会一卡一卡。</p>
+  </div>
+
+  <div class="panel">
+    <h2>任务清单</h2>
+    <ol>
+      <li>点「开始动画」，看小方块平滑往返；再点「开始卡顿」，看它卡成幻灯片</li>
+      <li>打开 Performance 面板 → 点 ● 录制 → 等约 5 秒 → 点 ■ 停止录制</li>
+      <li>看顶部 FPS 图（绿色柱子）是不是掉出了大坑；红色角标 = 长任务</li>
+      <li>点开一条长任务 → 在火焰图里找那个「占满宽度」的函数，它的名字就是元凶 → 点它跳去源码</li>
+      <li>彩蛋：点开 Summary 标签，看 Self time 排行榜，是不是同一个人？</li>
+    </ol>
+  </div>
+
+<script>
+  let moving = false;
+  let jank = false;
+
+  document.getElementById('btn-start').addEventListener('click', () => {
+    if (moving) return;
+    moving = true;
+    let x = 0, dir = 1;
+    setInterval(() => {
+      jankyWork(); // ← 元凶：每一帧都被它拖累
+      x += dir * 3;
+      if (x > 260 || x < 0) dir = -dir;
+      document.getElementById('box').style.left = x + 'px';
+    }, 16);
+  });
+
+  document.getElementById('btn-jank').addEventListener('click', () => {
+    jank = !jank;
+    document.getElementById('note').textContent = jank
+      ? '卡顿已开启：动画卡成幻灯片。去 Performance 面板抓元凶吧！'
+      : '卡顿已关闭：动画恢复平滑。';
+  });
+
+  function jankyWork() {
+    if (!jank) return;
+    // 模拟「布局抖动」：写样式 → 读布局 → 写 → 读……浏览器每读一次都要重新算布局
+    for (let i = 0; i < 8; i++) {
+      document.body.style.marginTop = '0px';
+      document.body.offsetHeight; // 强制重新计算布局
+    }
+  }
+</script>
+</body>
+</html>

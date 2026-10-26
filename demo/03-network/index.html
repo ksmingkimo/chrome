@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>第 3 课练习 · 请求去哪了</title>
+<!-- 下面这个 CSS 文件故意不存在：打开 Network 后刷新页面，你能在列表里找到这个红色失败行吗？ -->
+<link rel="stylesheet" href="missing.css">
+<style>
+  body { font-family: "Microsoft JhengHei", "PingFang TC", sans-serif; background: #eef2f7; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; color: #333; }
+  .panel { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 16px 20px; margin-top: 16px; max-width: 620px; }
+  .panel h2 { margin: 0 0 8px; font-size: 16px; color: #333; }
+  .panel p, .panel ol { margin: 0; padding-left: 20px; font-size: 14px; color: #666; line-height: 1.9; }
+  .panel p { padding-left: 0; }
+  button { background: #2f6fed; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; margin: 4px 8px 4px 0; font-size: 14px; }
+  button:hover { background: #1a4fc0; }
+  img { display: block; margin: 8px 0; border-radius: 6px; }
+</style>
+</head>
+<body>
+  <h1>第 3 课练习 · 请求去哪了</h1>
+
+  <div class="panel">
+    <h2>图片区（页面载入时就会发出请求）</h2>
+    <img src="cat.svg" alt="猫">
+    <img src="dog.svg" alt="狗">
+  </div>
+
+  <div class="panel">
+    <h2>按钮区（按之前先打开 Network 面板）</h2>
+    <p>前三个按钮需要联网（使用 httpbin.org 这个公共接口服务）。</p>
+    <button id="btn-ok">发一个成功的请求（200）</button>
+    <button id="btn-404">发一个失败的请求（404）</button>
+    <button id="btn-slow">发一个超慢的请求（等 3 秒）</button>
+    <button id="btn-missing">加载一张不存在的本地图片</button>
+  </div>
+
+  <div class="panel">
+    <h2>任务清单</h2>
+    <ol>
+      <li>打开 Network 面板（F12 → Network），然后 F5 刷新：数一数页面发出了几个请求？哪个是红色的？</li>
+      <li>点「成功的请求」按钮 → 在列表里点它 → 依次看 Headers / Payload / Preview 三个标签</li>
+      <li>点「失败的请求」按钮 → 红行 → 它的 Status 码是多少？</li>
+      <li>把 Throttling（网络限速）调成 Slow 3G，再点「超慢的请求」，盯着它的 Waterfall 变化；鼠标悬停到瀑布条上看各阶段耗时</li>
+      <li>点「不存在的本地图片」按钮 → 又一个红行，Status 显示什么？</li>
+      <li>用顶部的过滤器，试试只看 Img、只看 Fetch/XHR</li>
+    </ol>
+  </div>
+
+<script>
+  document.getElementById('btn-ok').addEventListener('click', async () => {
+    const res = await fetch('https://httpbin.org/get?from=lesson3');
+    const data = await res.json();
+    console.log('成功！状态码：', res.status, '数据：', data);
+  });
+
+  document.getElementById('btn-404').addEventListener('click', async () => {
+    const res = await fetch('https://httpbin.org/status/404');
+    console.log('这个请求的状态码是：', res.status);
+  });
+
+  document.getElementById('btn-slow').addEventListener('click', async () => {
+    console.time('slow 请求耗时');
+    await fetch('https://httpbin.org/delay/3');
+    console.timeEnd('slow 请求耗时');
+  });
+
+  document.getElementById('btn-missing').addEventListener('click', () => {
+    const img = new Image();
+    img.src = 'not-exist.png';
+    document.body.appendChild(img);
+  });
+</script>
+</body>
+</html>

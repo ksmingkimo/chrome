@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>第 8 课练习 · 进阶工具箱试验田</title>
+<style>
+  body { font-family: "Microsoft JhengHei", "PingFang TC", sans-serif; background: #eef2f7; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; color: #333; }
+  .panel { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 16px 20px; margin-top: 16px; max-width: 620px; }
+  .panel h2 { margin: 0 0 8px; font-size: 16px; color: #333; }
+  .panel p, .panel ol { margin: 0; padding-left: 20px; font-size: 14px; color: #666; line-height: 1.9; }
+  .panel p { padding-left: 0; }
+  button { background: #2f6fed; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; margin: 8px 8px 8px 0; font-size: 14px; }
+  button:hover { background: #1a4fc0; }
+  #msg { color: #1a4fc0; font-weight: bold; }
+
+  /* 窄屏媒体查询：设备模拟（Ctrl+Shift+M）时页面会变黄 */
+  @media (max-width: 500px) {
+    body { background: #fff3c4; }
+    h1::after { content: '（现在是手机窄屏视图 📱）'; color: #b07800; }
+  }
+</style>
+</head>
+<body>
+  <h1>第 8 课练习 · 进阶工具箱试验田</h1>
+
+  <div class="panel">
+    <h2>按钮区（Coverage 练习：把按钮都点一遍）</h2>
+    <button id="btn-a">按钮 A（有用的）</button>
+    <button id="btn-b">按钮 B（有用的）</button>
+    <p id="msg"></p>
+  </div>
+
+  <div class="panel">
+    <h2>本页的六个小任务</h2>
+    <ol>
+      <li>Command Menu：Ctrl+Shift+P → 输 screenshot → Capture full size screenshot；再输 dark 切暗色主题</li>
+      <li>Snippets：Sources → Snippets → 新建片段改标题，Run 后看效果</li>
+      <li>Coverage：Show Coverage → 录制 → 把两个按钮都点一遍 → 找出「从没被执行」的死代码</li>
+      <li>设备模拟：Ctrl+Shift+M → 选 iPhone → 看页面变黄（媒体查询生效）</li>
+      <li>Lighthouse：Generate report → 记录四栏分数</li>
+      <li>Local Overrides（选做）：去任意真实网站试验</li>
+    </ol>
+  </div>
+
+<script>
+  document.getElementById('btn-a').addEventListener('click', () => {
+    document.getElementById('msg').textContent = '按钮 A 被点击了';
+  });
+
+  document.getElementById('btn-b').addEventListener('click', () => {
+    document.getElementById('msg').textContent = '按钮 B 被点击了';
+  });
+
+  // 死代码：这个函数从没被调用，Coverage 会把它标成红色
+  function neverCalledFunction() {
+    console.log('我是一个从没被调用的函数，属于可以删除的死代码');
+    const unused = [1, 2, 3].map((n) => n * n);
+    return unused.join(',');
+  }
+</script>
+</body>
+</html>

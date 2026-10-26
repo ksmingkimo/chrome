@@ -1,0 +1,70 @@
+<!--
+ * @Author: ksmingkimo ksmingkimo@users.noreply.github.com
+ * @Date: 2026-10-23 16:20:29
+ * @LastEditors: ksmingkimo ksmingkimo@users.noreply.github.com
+ * @LastEditTime: 2026-10-23 17:30:55
+ * @FilePath: \chrome\demo\06-application\index.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>第 6 课练习 · 记住我失灵</title>
+<style>
+  body { font-family: "Microsoft JhengHei", "PingFang TC", sans-serif; background: #eef2f7; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; color: #333; }
+  .panel { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 16px 20px; margin-top: 16px; max-width: 620px; }
+  .panel h2 { margin: 0 0 8px; font-size: 16px; color: #333; }
+  .panel p, .panel ol { margin: 0; padding-left: 20px; font-size: 14px; color: #666; line-height: 1.9; }
+  .panel p { padding-left: 0; }
+  input[type="text"] { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+  button { background: #2f6fed; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; margin: 8px 8px 8px 0; font-size: 14px; }
+  button:hover { background: #1a4fc0; }
+  #greeting { color: #1a4fc0; font-weight: bold; }
+</style>
+</head>
+<body>
+  <h1>第 6 课练习 · 记住我失灵</h1>
+
+  <div class="panel">
+    <h2>用户区</h2>
+    <p>你的昵称：<input id="nick-input" type="text" placeholder="输入昵称"> <label><input type="checkbox" id="remember"> 记住我</label> <button id="btn-save">保存</button></p>
+    <p id="greeting"></p>
+    <p>本页访问次数：<span id="visit">0</span>（谜题：关掉标签页重开，次数为什么清零？）</p>
+  </div>
+
+  <div class="panel">
+    <h2>任务清单</h2>
+    <ol>
+      <li>输入昵称、点保存 → 刷新页面 → 昵称没有恢复？</li>
+      <li>打开 Application 面板 → Local Storage → 看浏览器到底存了什么 key 和值 → 对比源码里读取的 key → 找出 bug 并修复</li>
+      <li>谜题：访问次数住在哪个仓库？为什么关标签页就清零？</li>
+      <li>手动操作练习：双击某个值直接改、右键删除、点 ✚ 新增一条键值对、最后试试 Clear all</li>
+      <li>Console API 练习：<code>localStorage.setItem('test','你好')</code> 刷新后它还在吗？<code>sessionStorage.setItem('test2','再见')</code> 关掉标签页重开后它还在吗？</li>
+    </ol>
+  </div>
+
+<script>
+  // bug①：保存时写 'nickname'，载入时读 'nick' —— key 对不上，所以永远恢复不了
+  document.getElementById('btn-save').addEventListener('click', () => {
+    const nick = document.getElementById('nick-input').value;
+    localStorage.setItem('nickname', nick);
+    document.getElementById('greeting').textContent = '已保存：' + nick;
+  });
+
+  // 页面载入时恢复昵称
+  const savedNick = localStorage.getItem('nickname'); // ← 读错了 key
+  if (savedNick) {
+    document.getElementById('nick-input').value = savedNick;
+    document.getElementById('greeting').textContent = '欢迎回来，' + savedNick + '！';
+  }
+
+  // bug②：访问次数存在 sessionStorage —— 关掉标签页就清零
+  const visit = document.getElementById('visit');
+  let count = Number(localStorage.getItem('visitCount') || 0) + 1;
+  localStorage.setItem('visitCount', count);
+  visit.textContent = count;
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>第 2 课练习 · 报错满天飞</title>
+<style>
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+    background: #eef2f7;
+    margin: 0;
+    padding: 24px;
+  }
+  h1 { font-size: 20px; color: #333; }
+  .panel {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 16px 20px;
+    margin-top: 16px;
+    max-width: 560px;
+  }
+  .panel h2 { margin: 0 0 8px; font-size: 16px; color: #333; }
+  .panel ol, .panel p { margin: 0; padding-left: 20px; font-size: 14px; color: #666; line-height: 1.9; }
+  button {
+    background: #2f6fed;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 4px 8px 4px 0;
+    font-size: 14px;
+  }
+  button:hover { background: #1a4fc0; }
+</style>
+</head>
+<body>
+  <h1>第 2 课练习 · 报错满天飞</h1>
+
+  <div class="panel">
+    <h2>按钮区</h2>
+    <p style="padding-left: 0;">打开 Console（F12 → Console 标签，或直接按 Ctrl+Shift+J），这个页面会「说话」。</p>
+    <button id="btn-log">按我：我会打日志</button>
+    <button id="btn-table">按我：我会打印表格</button>
+    <button id="btn-boom">按我：我会让页面报错</button>
+    <button id="btn-bad">按我：我要加载不存在的图片</button>
+  </div>
+
+  <div class="panel">
+    <h2>任务清单</h2>
+    <ol>
+      <li>看页面载入时 Console 里已经说了什么（分清 log / warn 的样式）</li>
+      <li>点「报错」按钮，让红色错误出现，然后点错误信息跳转到出错的代码行</li>
+      <li>用 Console 顶部的过滤器，试试只看 Errors、只看 Warnings</li>
+      <li>点「打印表格」按钮，看 console.table 的效果</li>
+      <li>在输入行里依次执行：<code>2+3</code>、<code>$0</code>、<code>$$('button').length</code>、<code>$_</code></li>
+      <li>点「加载不存在图片」按钮，看网络加载失败的错误长什么样</li>
+    </ol>
+  </div>
+
+<script>
+  // 页面载入时就开始说话
+  console.log('页面载入完成，我是一条普通日志（log）');
+  console.info('我是一条信息（info）');
+  console.warn('注意：点「按我：我会让页面报错」按钮，可以看到红色报错长什么样（warn）');
+
+  function greet() {
+    return '你好，Console！';
+  }
+
+  document.getElementById('btn-log').addEventListener('click', () => {
+    console.log('按钮被点击了，时间：', new Date().toLocaleTimeString());
+  });
+
+  document.getElementById('btn-table').addEventListener('click', () => {
+    const data = [
+      { 姓名: '小明', 分数: 88, 及格: true },
+      { 姓名: '小華', 分数: 59, 及格: false },
+      { 姓名: '小美', 分数: 95, 及格: true },
+    ];
+    console.table(data);
+  });
+
+  document.getElementById('btn-boom').addEventListener('click', () => {
+    greet(); // ← 函数名拼错了，点这个按钮就会在 Console 炸出红色报错
+  });
+
+  document.getElementById('btn-bad').addEventListener('click', () => {
+    const img = new Image();
+    img.src = 'not-exist.png'; // 这张图片不存在，会触发网络加载错误
+    document.body.appendChild(img);
+  });
+</script>
+</body>
+</html>

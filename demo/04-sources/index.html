@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>第 4 课练习 · 算错的账单</title>
+<style>
+  body { font-family: "Microsoft JhengHei", "PingFang TC", sans-serif; background: #eef2f7; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; color: #333; }
+  .panel { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 16px 20px; margin-top: 16px; max-width: 620px; }
+  .panel h2 { margin: 0 0 8px; font-size: 16px; color: #333; }
+  .panel p, .panel ol { margin: 0; padding-left: 20px; font-size: 14px; color: #666; line-height: 1.9; }
+  .panel p { padding-left: 0; }
+  table { border-collapse: collapse; font-size: 14px; color: #555; margin: 8px 0; }
+  th, td { border: 1px solid #e0e0e0; padding: 6px 14px; text-align: left; }
+  input { width: 56px; padding: 4px; }
+  button { background: #2f6fed; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; margin: 8px 8px 8px 0; font-size: 14px; }
+  button:hover { background: #1a4fc0; }
+  .rule { color: #b07800; }
+  #result { font-size: 18px; color: #1a4fc0; font-weight: bold; }
+</style>
+</head>
+<body>
+  <h1>第 4 课练习 · 算错的账单</h1>
+
+  <div class="panel">
+    <h2>购物车</h2>
+    <table id="cart">
+      <tr><th>商品</th><th>单价</th><th>数量</th></tr>
+      <tr data-price="100"><td>键盘</td><td>100</td><td><input type="number" value="2" min="0" class="qty"></td></tr>
+      <tr data-price="50"><td>鼠标</td><td>50</td><td><input type="number" value="3" min="0" class="qty"></td></tr>
+    </table>
+    <p class="rule">活动规则：满 300 元打九折</p>
+    <button id="btn-calc">计算总价</button>
+    <p id="result"></p>
+  </div>
+
+  <div class="panel">
+    <h2>任务清单</h2>
+    <ol>
+      <li>先直接点「计算总价」，看 Console 里出现什么报错 → 用报错三件套定位并修掉 bug①（提示：循环条件多了半格）</li>
+      <li>修好后再点「计算」：数字出来了，但不对（键盘 100×2 + 鼠标 50×3 = 350，打九折应得 315）</li>
+      <li>打开 Sources 面板，在左侧文件树找到本页面，在 <code>applyDiscount</code> 函数第一行点行号打上断点</li>
+      <li>再点「计算总价」→ 程序暂停、页面冻结 → 观察右侧 Scope（变量值）与 Call Stack（调用栈）</li>
+      <li>按 F10 单步执行，盯着 <code>total</code> 的变化，走到它变错的那一步 → bug② 现形</li>
+      <li>修好 bug②，刷新页面验证结果 = 315</li>
+    </ol>
+  </div>
+
+<script>
+  function applyDiscount(total) {
+    if (total >= 300) {
+      total = total * 0.9; // bug②：本意是打九折，应该写 total = total * 0.9
+    }
+    return total;
+  }
+
+  function calcTotal(rows) {
+    let total = 0;
+    for (let i = 0; i < rows.length; i++) { // bug①：应该 i < rows.length，多循环一次会读到 undefined
+      const price = Number(rows[i].dataset.price);
+      const qty = Number(rows[i].querySelector('.qty').value);
+      total += price * qty;
+    }
+    return applyDiscount(total);
+  }
+
+  document.getElementById('btn-calc').addEventListener('click', () => {
+    const rows = document.querySelectorAll('#cart tr[data-price]');
+    const total = calcTotal(rows);
+    document.getElementById('result').textContent = '总价：' + total + ' 元';
+  });
+</script>
+</body>
+</html>
